@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard | Area Clienti ITC</title>
+    <meta name="description" content="Caricamento documenti - Studio Associato Marotta & Balsamo">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter+Tight:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
+
+    <!-- Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Top Navigation -->
+    <nav class="topnav">
+        <div class="topnav-left">
+            <a href="index.html" class="logo">
+                <span class="logo-mark">ITC</span>
+                <div class="logo-divider"></div>
+                <span class="logo-text">Area Clienti</span>
+            </a>
+        </div>
+
+        <div class="topnav-center">
+            <i data-lucide="user" style="width:16px;height:16px;"></i>
+            Benvenuto, <span class="user-name" id="userName"></span>
+        </div>
+
+        <div class="topnav-right">
+            <span class="user-name" id="userNameMobile" style="display:none;font-size:0.85rem;color:var(--color-text-secondary);"></span>
+            <button class="btn btn-ghost btn-sm" onclick="showPasswordModal()">
+                <i data-lucide="key-round" style="width:16px;height:16px;"></i>
+                <span class="hide-mobile">Cambia Password</span>
+            </button>
+            <button class="btn btn-ghost btn-sm" onclick="Auth.logout()">
+                <i data-lucide="log-out" style="width:16px;height:16px;"></i>
+                <span class="hide-mobile">Esci</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="dashboard-main">
+        <!-- Header -->
+        <div class="dashboard-header">
+            <div class="section-tag">Caricamento Documenti</div>
+            <h1 class="section-title">Invia i tuoi <em>Documenti</em></h1>
+            <p class="text-secondary" style="max-width:600px;">
+                Seleziona la categoria, trascina o seleziona i file da caricare. I documenti verranno archiviati automaticamente.
+            </p>
+        </div>
+
+        <!-- Category Selector -->
+        <section class="category-section">
+            <h2 style="font-size:0.85rem;font-weight:500;color:var(--color-text-secondary);margin-bottom:16px;">
+                <i data-lucide="folder" style="width:16px;height:16px;vertical-align:-3px;margin-right:6px;"></i>
+                Seleziona Categoria
+            </h2>
+            <div class="category-grid" id="categoryGrid">
+                <!-- Renderizzato via JS -->
+            </div>
+        </section>
+
+        <!-- Upload Zone -->
+        <section class="upload-section">
+            <div class="upload-zone disabled" id="uploadZone">
+                <i data-lucide="upload-cloud" class="upload-zone-icon" style="width:48px;height:48px;"></i>
+                <div class="upload-zone-title">
+                    Trascina i file qui oppure clicca per selezionare
+                </div>
+                <div class="upload-zone-subtitle">
+                    <span id="dropzoneCategory" class="text-accent"></span>
+                    <br>
+                    Formati: PDF, DOC, DOCX, CSV, XLS, XLSX &mdash; Max 25MB per file
+                </div>
+                <input
+                    type="file"
+                    class="upload-zone-input"
+                    id="fileInput"
+                    multiple
+                    accept=".pdf,.doc,.docx,.csv,.xls,.xlsx"
+                >
+            </div>
+
+            <!-- File Queue -->
+            <div class="file-queue" id="fileQueue">
+                <div class="file-queue-header">
+                    <span class="file-queue-title">
+                        <i data-lucide="files" style="width:16px;height:16px;vertical-align:-3px;margin-right:4px;"></i>
+                        File selezionati: <strong id="queueCount">0</strong>
+                    </span>
+                    <button class="btn btn-ghost btn-sm" onclick="Dashboard.clearQueue()">
+                        <i data-lucide="trash-2" style="width:14px;height:14px;"></i>
+                        Svuota
+                    </button>
+                </div>
+                <div class="file-queue-list" id="fileQueueList">
+                    <!-- Renderizzato via JS -->
+                </div>
+                <div class="upload-actions">
+                    <button class="btn btn-outline btn-sm" onclick="Dashboard.clearQueue()">
+                        Annulla
+                    </button>
+                    <button class="btn btn-primary" id="uploadBtn" onclick="Dashboard.uploadAll()" disabled>
+                        <i data-lucide="upload" style="width:16px;height:16px;"></i>
+                        <span>Carica File</span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Upload History -->
+        <section class="history-section">
+            <div class="history-header">
+                <div>
+                    <div class="section-tag">Archivio</div>
+                    <h2 class="section-title" style="font-size:1.3rem;">Storico <em>Caricamenti</em></h2>
+                </div>
+                <div class="history-filters">
+                    <button class="filter-btn active" data-filter="all" onclick="Dashboard.filterHistory('all')">Tutti</button>
+                    <button class="filter-btn" data-filter="fatture_acquisto" onclick="Dashboard.filterHistory('fatture_acquisto')">Fatt. Acquisto</button>
+                    <button class="filter-btn" data-filter="fatture_vendita" onclick="Dashboard.filterHistory('fatture_vendita')">Fatt. Vendita</button>
+                    <button class="filter-btn" data-filter="ddt" onclick="Dashboard.filterHistory('ddt')">DDT</button>
+                    <button class="filter-btn" data-filter="estratti_conto" onclick="Dashboard.filterHistory('estratti_conto')">Estratti Conto</button>
+                    <button class="filter-btn" data-filter="prima_nota" onclick="Dashboard.filterHistory('prima_nota')">Prima Nota</button>
+                </div>
+            </div>
+
+            <!-- Empty State -->
+            <div class="empty-state" id="historyEmpty">
+                <div class="empty-state-icon">
+                    <i data-lucide="inbox" style="width:48px;height:48px;"></i>
+                </div>
+                <div class="empty-state-title">Nessun caricamento</div>
+                <div class="empty-state-text">I documenti caricati appariranno qui</div>
+            </div>
+
+            <!-- History Table -->
+            <div class="table-container hidden" id="historyTable">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Data</th>
+                            <th>File</th>
+                            <th>Categoria</th>
+                            <th>Stato</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyBody">
+                        <!-- Renderizzato via JS -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <!-- Password Change Modal -->
+    <div class="modal-overlay" id="passwordModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Cambia Password</h3>
+                <button class="btn btn-icon btn-ghost btn-sm" onclick="hidePasswordModal()">
+                    <i data-lucide="x" style="width:20px;height:20px;"></i>
+                </button>
+            </div>
+            <form class="modal-body" id="passwordForm" onsubmit="handlePasswordChange(event)">
+                <div class="login-error hidden" id="passwordError">
+                    <i data-lucide="alert-circle" style="width:16px;height:16px;"></i>
+                    <span id="passwordErrorText"></span>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="currentPassword">Password attuale</label>
+                    <input type="password" id="currentPassword" class="form-input" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="newPassword">Nuova password</label>
+                    <input type="password" id="newPassword" class="form-input" required minlength="6">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="confirmPassword">Conferma nuova password</label>
+                    <input type="password" id="confirmPassword" class="form-input" required minlength="6">
+                </div>
+
+                <div class="modal-footer" style="padding:0;">
+                    <button type="button" class="btn btn-outline" onclick="hidePasswordModal()">Annulla</button>
+                    <button type="submit" class="btn btn-primary" id="passwordBtn">
+                        <span>Salva Password</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>

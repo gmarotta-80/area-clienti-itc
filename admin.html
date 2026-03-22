@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin | ITC Area Clienti</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter+Tight:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
+
+    <!-- Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- ====== ADMIN LOGIN ====== -->
+    <div class="admin-login-overlay" id="adminLoginOverlay">
+        <div class="login-page" style="min-height:100vh;">
+            <div class="login-bg-gradient"></div>
+            <div class="login-card" id="adminLoginCard">
+                <div class="login-logo">
+                    <span class="logo-mark">ITC</span>
+                    <div class="logo-subtitle">Il Tuo Commercialista</div>
+                    <div class="login-tag">
+                        <i data-lucide="shield" style="width:12px;height:12px;"></i>
+                        Pannello Admin
+                    </div>
+                </div>
+
+                <div class="login-error hidden" id="adminError">
+                    <i data-lucide="alert-circle" style="width:16px;height:16px;"></i>
+                    <span id="adminErrorText"></span>
+                </div>
+
+                <form class="login-form" onsubmit="Admin.login(event)">
+                    <div class="form-group">
+                        <label class="form-label" for="adminPassword">Password Admin</label>
+                        <div class="input-with-icon">
+                            <i data-lucide="shield" class="input-icon" style="width:18px;height:18px;"></i>
+                            <input type="password" id="adminPassword" class="form-input" placeholder="Password amministratore" required>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-lg" id="adminLoginBtn" style="width:100%;margin-top:8px;">
+                        <span>Accedi</span>
+                        <i data-lucide="arrow-right" style="width:18px;height:18px;"></i>
+                    </button>
+                </form>
+
+                <div class="login-footer">
+                    <a href="index.html">
+                        <i data-lucide="arrow-left" style="width:14px;height:14px;vertical-align:-2px;"></i>
+                        Torna all'Area Clienti
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====== ADMIN PANEL ====== -->
+    <div class="admin-layout" id="adminLayout">
+        <!-- Mobile sidebar overlay -->
+        <div class="admin-sidebar-overlay" id="sidebarOverlay" onclick="Admin.closeSidebar()"></div>
+
+        <!-- Sidebar -->
+        <aside class="admin-sidebar">
+            <div class="admin-sidebar-header">
+                <div class="logo">
+                    <span class="logo-mark">ITC</span>
+                    <div class="logo-divider"></div>
+                    <span class="logo-text">Admin</span>
+                </div>
+                <div class="admin-sidebar-title">Pannello di gestione</div>
+            </div>
+
+            <nav class="admin-nav">
+                <button class="admin-nav-item active" data-view="clients" onclick="Admin.navigate('clients')">
+                    <i data-lucide="users" style="width:18px;height:18px;"></i>
+                    Clienti
+                </button>
+                <button class="admin-nav-item" data-view="logs" onclick="Admin.navigate('logs')">
+                    <i data-lucide="file-text" style="width:18px;height:18px;"></i>
+                    Log Caricamenti
+                </button>
+                <button class="admin-nav-item" data-view="settings" onclick="Admin.navigate('settings')">
+                    <i data-lucide="settings" style="width:18px;height:18px;"></i>
+                    Impostazioni
+                </button>
+            </nav>
+
+            <div class="admin-sidebar-footer">
+                <button class="admin-nav-item" onclick="Admin.logout()" style="color:var(--color-text-tertiary);">
+                    <i data-lucide="log-out" style="width:18px;height:18px;"></i>
+                    Esci
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="admin-content">
+            <!-- Mobile menu button -->
+            <button class="btn btn-ghost mobile-menu-toggle" onclick="Admin.toggleSidebar()" style="margin-bottom:16px;">
+                <i data-lucide="menu" style="width:20px;height:20px;"></i>
+            </button>
+
+            <!-- Stats -->
+            <div class="admin-stats">
+                <div class="stat-card" onclick="Admin.navigate('clients')" style="cursor:pointer;" title="Vai a Gestione Clienti">
+                    <div class="stat-icon">
+                        <i data-lucide="users" style="width:22px;height:22px;"></i>
+                    </div>
+                    <div>
+                        <div class="stat-value" id="statClients">0</div>
+                        <div class="stat-label">Clienti totali</div>
+                    </div>
+                </div>
+                <div class="stat-card" onclick="Admin.navigate('clients')" style="cursor:pointer;" title="Vai a Gestione Clienti">
+                    <div class="stat-icon">
+                        <i data-lucide="user-check" style="width:22px;height:22px;"></i>
+                    </div>
+                    <div>
+                        <div class="stat-value" id="statActive">0</div>
+                        <div class="stat-label">Clienti attivi</div>
+                    </div>
+                </div>
+                <div class="stat-card" onclick="Admin.navigate('logs')" style="cursor:pointer;" title="Vai a Log Caricamenti">
+                    <div class="stat-icon">
+                        <i data-lucide="upload" style="width:22px;height:22px;"></i>
+                    </div>
+                    <div>
+                        <div class="stat-value" id="statUploads">0</div>
+                        <div class="stat-label">Documenti caricati</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Riepilogo documenti per categoria -->
+            <div class="admin-stats" id="categoryStats" style="display:none;">
+                <div class="stat-card" style="flex-direction:column;align-items:flex-start;gap:8px;padding:16px 20px;">
+                    <div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--color-accent);font-weight:600;">Documenti per Categoria</div>
+                    <div id="categoryBreakdown" style="width:100%;display:flex;flex-direction:column;gap:6px;"></div>
+                </div>
+            </div>
+
+            <!-- ====== VIEW: CLIENTI ====== -->
+            <div class="admin-view active" id="view-clients">
+                <div class="admin-content-header">
+                    <h2 class="admin-content-title">Gestione Clienti</h2>
+                    <button class="btn btn-primary" onclick="Admin.showAddClientModal()">
+                        <i data-lucide="user-plus" style="width:16px;height:16px;"></i>
+                        Nuovo Cliente
+                    </button>
+                </div>
+
+                <div class="empty-state hidden" id="clientsEmpty">
+                    <div class="empty-state-icon">
+                        <i data-lucide="users" style="width:48px;height:48px;"></i>
+                    </div>
+                    <div class="empty-state-title">Nessun cliente</div>
+                    <div class="empty-state-text">Aggiungi il primo cliente per iniziare</div>
+                </div>
+
+                <div class="table-container" id="clientsTable">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Cliente</th>
+                                <th>Telefono</th>
+                                <th>Stato</th>
+                                <th>Data Creazione</th>
+                                <th>Azioni</th>
+                            </tr>
+                        </thead>
+                        <tbody id="clientsBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ====== VIEW: LOG CARICAMENTI ====== -->
+            <div class="admin-view" id="view-logs">
+                <div class="admin-content-header">
+                    <h2 class="admin-content-title">Log Caricamenti</h2>
+                    <div class="flex gap-12">
+                        <select class="form-select" id="logClientFilter" onchange="Admin.filterLogs()" style="width:auto;padding:8px 40px 8px 14px;font-size:0.85rem;">
+                            <option value="">Tutti i clienti</option>
+                        </select>
+                        <button class="btn btn-outline btn-sm" onclick="Admin.loadLogs()">
+                            <i data-lucide="refresh-cw" style="width:14px;height:14px;"></i>
+                            Aggiorna
+                        </button>
+                    </div>
+                </div>
+
+                <div class="empty-state hidden" id="logsEmpty">
+                    <div class="empty-state-icon">
+                        <i data-lucide="file-text" style="width:48px;height:48px;"></i>
+                    </div>
+                    <div class="empty-state-title">Nessun caricamento</div>
+                    <div class="empty-state-text">I log dei caricamenti appariranno qui</div>
+                </div>
+
+                <div class="table-container" id="logsTable">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Cliente</th>
+                                <th>File</th>
+                                <th>Categoria</th>
+                                <th>Apri</th>
+                            </tr>
+                        </thead>
+                        <tbody id="logsBody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- ====== VIEW: IMPOSTAZIONI ====== -->
+            <div class="admin-view" id="view-settings">
+                <div class="admin-content-header">
+                    <h2 class="admin-content-title">Impostazioni</h2>
+                </div>
+
+                <!-- Email notifica -->
+                <div class="settings-group">
+                    <h3 class="settings-group-title">
+                        <i data-lucide="mail" style="width:16px;height:16px;vertical-align:-3px;margin-right:8px;"></i>
+                        Email di Notifica
+                    </h3>
+                    <div class="form-group" style="margin-bottom:0;">
+                        <label class="form-label">Indirizzo email per le notifiche di caricamento</label>
+                        <input type="email" id="notificationEmail" class="form-input" value="abalsamo.ipad@gmail.com">
+                    </div>
+                </div>
+
+                <!-- Estensioni file -->
+                <div class="settings-group">
+                    <h3 class="settings-group-title">
+                        <i data-lucide="file-cog" style="width:16px;height:16px;vertical-align:-3px;margin-right:8px;"></i>
+                        Estensioni File Consentite
+                    </h3>
+                    <div class="extension-tags" id="extensionTags">
+                        <!-- Renderizzato via JS -->
+                    </div>
+                    <div class="flex gap-8" style="align-items:flex-end;">
+                        <div class="form-group" style="flex:1;margin-bottom:0;">
+                            <label class="form-label">Aggiungi estensione</label>
+                            <input type="text" id="newExtension" class="form-input" placeholder="es. jpg" style="padding:10px 14px;">
+                        </div>
+                        <button class="btn btn-outline btn-sm" onclick="Admin.addExtension()" style="height:43px;">
+                            <i data-lucide="plus" style="width:16px;height:16px;"></i>
+                            Aggiungi
+                        </button>
+                    </div>
+                </div>
+
+                <div style="text-align:right;margin-top:24px;">
+                    <button class="btn btn-primary" id="saveSettingsBtn" onclick="Admin.saveSettings()">
+                        <i data-lucide="save" style="width:16px;height:16px;"></i>
+                        <span>Salva Impostazioni</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====== MODALE: NUOVO/MODIFICA CLIENTE ====== -->
+    <div class="modal-overlay" id="clientModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" id="clientModalTitle">Nuovo Cliente</h3>
+                <button class="btn btn-icon btn-ghost btn-sm" onclick="Admin.hideClientModal()">
+                    <i data-lucide="x" style="width:20px;height:20px;"></i>
+                </button>
+            </div>
+            <form class="modal-body" id="clientForm" onsubmit="Admin.saveClient(event)">
+                <div class="login-error hidden" id="clientError">
+                    <i data-lucide="alert-circle" style="width:16px;height:16px;"></i>
+                    <span id="clientErrorText"></span>
+                </div>
+
+                <div class="form-group" style="margin-bottom:12px;">
+                    <label class="form-label" style="margin-bottom:8px;">Tipo cliente</label>
+                    <div class="flex gap-8">
+                        <button type="button" class="btn btn-sm client-type-btn active" id="btnTypePersona" onclick="Admin.setClientType('persona')" style="flex:1;">
+                            <i data-lucide="user" style="width:14px;height:14px;"></i> Persona
+                        </button>
+                        <button type="button" class="btn btn-sm client-type-btn" id="btnTypeDenom" onclick="Admin.setClientType('denominazione')" style="flex:1;">
+                            <i data-lucide="building-2" style="width:14px;height:14px;"></i> Azienda / Ente
+                        </button>
+                    </div>
+                </div>
+
+                <div id="clientFieldsPersona">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="clientNome">Nome</label>
+                            <input type="text" id="clientNome" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="clientCognome">Cognome</label>
+                            <input type="text" id="clientCognome" class="form-input">
+                        </div>
+                    </div>
+                </div>
+
+                <div id="clientFieldsDenom" class="hidden">
+                    <div class="form-group">
+                        <label class="form-label" for="clientDenominazione">Denominazione</label>
+                        <input type="text" id="clientDenominazione" class="form-input" placeholder="Ragione sociale o denominazione">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="clientEmail">Email</label>
+                    <input type="email" id="clientEmail" class="form-input" required>
+                </div>
+
+                <div class="form-group" id="clientPasswordGroup">
+                    <label class="form-label" for="clientPassword">Password</label>
+                    <input type="password" id="clientPassword" class="form-input" minlength="6">
+                    <span class="form-error" style="color:var(--color-text-tertiary);font-size:0.75rem;">Minimo 6 caratteri. In modifica, lascia vuoto per non cambiare.</span>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="clientTelefono">Telefono</label>
+                    <input type="tel" id="clientTelefono" class="form-input">
+                </div>
+
+                <div class="modal-footer" style="padding:0;">
+                    <button type="button" class="btn btn-outline" onclick="Admin.hideClientModal()">Annulla</button>
+                    <button type="submit" class="btn btn-primary" id="clientSaveBtn">
+                        <span>Salva</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ====== MODALE: DOCUMENTI CLIENTE ====== -->
+    <div class="modal-overlay" id="docsModal">
+        <div class="modal" style="max-width:720px;">
+            <div class="modal-header">
+                <h3 class="modal-title">
+                    <i data-lucide="folder-open" style="width:18px;height:18px;vertical-align:-3px;margin-right:8px;color:var(--color-accent);"></i>
+                    Documenti di <span id="docsClientName"></span>
+                </h3>
+                <button class="btn btn-icon btn-ghost btn-sm" onclick="Admin.hideDocsModal()">
+                    <i data-lucide="x" style="width:20px;height:20px;"></i>
+                </button>
+            </div>
+            <div class="modal-body" style="max-height:60vh;overflow-y:auto;">
+                <!-- Filtro categoria -->
+                <div style="margin-bottom:16px;">
+                    <select class="form-select" id="docsCategoryFilter" onchange="Admin.filterClientDocs()" style="width:auto;padding:8px 40px 8px 14px;font-size:0.85rem;">
+                        <option value="">Tutte le categorie</option>
+                        <option value="fatture_acquisto">Fatture Acquisto</option>
+                        <option value="fatture_vendita">Fatture Vendita</option>
+                        <option value="ddt">DDT</option>
+                        <option value="estratti_conto">Estratti Conto</option>
+                        <option value="prima_nota">Prima Nota</option>
+                    </select>
+                </div>
+
+                <div class="empty-state hidden" id="docsEmpty">
+                    <div class="empty-state-icon">
+                        <i data-lucide="file-x" style="width:36px;height:36px;"></i>
+                    </div>
+                    <div class="empty-state-title" style="font-size:0.95rem;">Nessun documento</div>
+                    <div class="empty-state-text" style="font-size:0.8rem;">Questo cliente non ha ancora caricato documenti</div>
+                </div>
+
+                <div class="table-container" id="docsTableContainer">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>File</th>
+                                <th>Categoria</th>
+                                <th>Apri</th>
+                            </tr>
+                        </thead>
+                        <tbody id="docsBody"></tbody>
+                    </table>
+                </div>
+
+                <div style="margin-top:12px;text-align:right;">
+                    <span class="text-tertiary" style="font-size:0.75rem;" id="docsCount"></span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-outline btn-sm" id="docsDriveLink" href="#" target="_blank" style="gap:6px;">
+                    <i data-lucide="external-link" style="width:14px;height:14px;"></i>
+                    Apri cartella Drive
+                </a>
+                <button class="btn btn-primary btn-sm" onclick="Admin.hideDocsModal()">Chiudi</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====== MODALE: CONFERMA ELIMINAZIONE ====== -->
+    <div class="modal-overlay" id="deleteModal">
+        <div class="modal" style="max-width:420px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Conferma Eliminazione</h3>
+                <button class="btn btn-icon btn-ghost btn-sm" onclick="Admin.hideDeleteModal()">
+                    <i data-lucide="x" style="width:20px;height:20px;"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="text-secondary" style="margin-bottom:8px;">
+                    Sei sicuro di voler eliminare il cliente:
+                </p>
+                <p style="font-weight:600;font-size:1.1rem;margin-bottom:4px;" id="deleteClientName"></p>
+                <p class="text-tertiary" style="font-size:0.85rem;" id="deleteClientEmail"></p>
+                <p class="text-tertiary mt-16" style="font-size:0.8rem;">
+                    <i data-lucide="alert-triangle" style="width:14px;height:14px;vertical-align:-3px;color:var(--color-warning);margin-right:4px;"></i>
+                    Questa azione non puo' essere annullata. La cartella Google Drive del cliente non verra' eliminata.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="Admin.hideDeleteModal()">Annulla</button>
+                <button class="btn btn-danger" id="deleteConfirmBtn">
+                    <i data-lucide="trash-2" style="width:16px;height:16px;"></i>
+                    Elimina
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/admin.js"></script>
+    <script>
+        // Animazione entrata login admin
+        gsap.to('#adminLoginCard', {
+            opacity: 1, y: 0, duration: 0.8,
+            ease: 'power3.out', delay: 0.2
+        });
+    </script>
+</body>
+</html>

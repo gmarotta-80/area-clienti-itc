@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Area Clienti | Il Tuo Commercialista</title>
+    <meta name="description" content="Area Clienti - Studio Associato Marotta & Balsamo">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Inter+Tight:wght@300;400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
+
+    <!-- Icons -->
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="login-page">
+        <!-- Background gradient -->
+        <div class="login-bg-gradient"></div>
+
+        <!-- Login Card -->
+        <div class="login-card" id="loginCard">
+            <!-- Logo -->
+            <div class="login-logo">
+                <span class="logo-mark">ITC</span>
+                <div class="logo-subtitle">Il Tuo Commercialista</div>
+                <div class="login-tag">
+                    <i data-lucide="lock" style="width:12px;height:12px;"></i>
+                    Area Clienti
+                </div>
+            </div>
+
+            <!-- Error Message -->
+            <div class="login-error" id="loginError">
+                <i data-lucide="alert-circle" style="width:16px;height:16px;"></i>
+                <span id="loginErrorText"></span>
+            </div>
+
+            <!-- Login Form -->
+            <form class="login-form" id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label class="form-label" for="email">Email</label>
+                    <div class="input-with-icon">
+                        <i data-lucide="mail" class="input-icon" style="width:18px;height:18px;"></i>
+                        <input
+                            type="email"
+                            id="email"
+                            class="form-input"
+                            placeholder="nome@email.com"
+                            required
+                            autocomplete="email"
+                        >
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="password">Password</label>
+                    <div class="input-with-icon">
+                        <i data-lucide="key-round" class="input-icon" style="width:18px;height:18px;"></i>
+                        <input
+                            type="password"
+                            id="password"
+                            class="form-input"
+                            placeholder="La tua password"
+                            required
+                            autocomplete="current-password"
+                        >
+                        <button type="button" class="input-toggle" onclick="togglePassword()" id="togglePwd">
+                            <i data-lucide="eye" style="width:18px;height:18px;" id="eyeIcon"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-lg" id="loginBtn" style="width:100%; margin-top:8px;">
+                    <span id="loginBtnText">Accedi</span>
+                    <i data-lucide="arrow-right" style="width:18px;height:18px;" id="loginBtnIcon"></i>
+                </button>
+            </form>
+
+            <!-- Forgot Password -->
+            <div id="forgotPasswordSection" style="text-align:center;margin-bottom:20px;">
+                <a href="#" onclick="showForgotPassword(event)" style="font-size:0.8rem;color:var(--color-text-tertiary);">
+                    Ho dimenticato la password
+                </a>
+            </div>
+
+            <!-- Forgot Password Form (hidden) -->
+            <div id="forgotPasswordForm" class="hidden" style="margin-bottom:20px;">
+                <div class="login-error" id="forgotError">
+                    <i data-lucide="alert-circle" style="width:16px;height:16px;"></i>
+                    <span id="forgotErrorText"></span>
+                </div>
+                <div id="forgotSuccess" class="hidden" style="text-align:center;padding:12px 16px;background:var(--color-success-bg);border:1px solid rgba(74,222,128,0.2);border-radius:var(--radius-sm);margin-bottom:16px;">
+                    <p style="font-size:0.85rem;color:var(--color-success);">
+                        <i data-lucide="check-circle" style="width:14px;height:14px;vertical-align:-2px;margin-right:4px;"></i>
+                        Se l'email e' registrata, riceverai un link per reimpostare la password.
+                    </p>
+                </div>
+                <form onsubmit="handleForgotPassword(event)">
+                    <div class="form-group">
+                        <label class="form-label" for="forgotEmail">Inserisci la tua email</label>
+                        <div class="input-with-icon">
+                            <i data-lucide="mail" class="input-icon" style="width:18px;height:18px;"></i>
+                            <input type="email" id="forgotEmail" class="form-input" placeholder="nome@email.com" required autocomplete="email">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary" id="forgotBtn" style="width:100%;">
+                        <span id="forgotBtnText">Invia link di reset</span>
+                        <i data-lucide="send" style="width:16px;height:16px;"></i>
+                    </button>
+                </form>
+                <div style="text-align:center;margin-top:12px;">
+                    <a href="#" onclick="hideForgotPassword(event)" style="font-size:0.8rem;color:var(--color-text-tertiary);">
+                        <i data-lucide="arrow-left" style="width:12px;height:12px;vertical-align:-2px;"></i>
+                        Torna al login
+                    </a>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="login-footer">
+                <a href="#" id="backToSite">
+                    <i data-lucide="arrow-left" style="width:14px;height:14px;vertical-align:-2px;"></i>
+                    Torna al sito
+                </a>
+            </div>
+
+            <div class="login-studio">
+                Studio Associato Marotta & Balsamo
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/config.js"></script>
+    <script src="js/auth.js"></script>
+    <script>
+        // Inizializza icone
+        lucide.createIcons();
+
+        // Se gia' autenticato, redirect alla dashboard
+        (function() {
+            const session = Auth.getSession();
+            if (session) {
+                window.location.href = 'dashboard.html';
+            }
+        })();
+
+        // Animazione entrata
+        gsap.to('#loginCard', {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            ease: 'power3.out',
+            delay: 0.2
+        });
+
+        // Toggle password visibility
+        function togglePassword() {
+            const input = document.getElementById('password');
+            const icon = document.getElementById('eyeIcon');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.setAttribute('data-lucide', 'eye-off');
+            } else {
+                input.type = 'password';
+                icon.setAttribute('data-lucide', 'eye');
+            }
+            lucide.createIcons({ nodes: [icon.parentElement] });
+        }
+
+        // Gestione login
+        let isSubmitting = false;
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            if (isSubmitting) return;
+
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const btn = document.getElementById('loginBtn');
+            const btnText = document.getElementById('loginBtnText');
+            const btnIcon = document.getElementById('loginBtnIcon');
+            const errorDiv = document.getElementById('loginError');
+            const errorText = document.getElementById('loginErrorText');
+
+            // Nascondi errore precedente
+            errorDiv.classList.remove('show');
+
+            // Loading state
+            isSubmitting = true;
+            btn.disabled = true;
+            btnText.textContent = 'Accesso in corso...';
+            btnIcon.style.display = 'none';
+
+            try {
+                const result = await Auth.login(email, password);
+
+                if (result.success) {
+                    // Animazione uscita e redirect
+                    gsap.to('#loginCard', {
+                        opacity: 0,
+                        y: -20,
+                        duration: 0.4,
+                        ease: 'power2.in',
+                        onComplete: () => {
+                            window.location.href = 'dashboard.html';
+                        }
+                    });
+                } else {
+                    // Mostra errore
+                    errorText.textContent = result.error;
+                    errorDiv.classList.add('show');
+
+                    // Shake animation
+                    gsap.fromTo('#loginCard',
+                        { x: -8 },
+                        { x: 0, duration: 0.5, ease: 'elastic.out(1, 0.3)' }
+                    );
+
+                    // Reset button
+                    isSubmitting = false;
+                    btn.disabled = false;
+                    btnText.textContent = 'Accedi';
+                    btnIcon.style.display = '';
+                }
+            } catch (err) {
+                errorText.textContent = 'Errore di connessione. Riprova.';
+                errorDiv.classList.add('show');
+                isSubmitting = false;
+                btn.disabled = false;
+                btnText.textContent = 'Accedi';
+                btnIcon.style.display = '';
+            }
+        }
+
+        // Link torna al sito
+        document.getElementById('backToSite').href = CONFIG.SITE_URL;
+
+        // ====== HO DIMENTICATO LA PASSWORD ======
+
+        function showForgotPassword(e) {
+            e.preventDefault();
+            document.getElementById('loginForm').classList.add('hidden');
+            document.getElementById('forgotPasswordSection').classList.add('hidden');
+            document.getElementById('forgotPasswordForm').classList.remove('hidden');
+            document.getElementById('forgotSuccess').classList.add('hidden');
+            document.getElementById('forgotError').classList.remove('show');
+            document.getElementById('forgotEmail').value = '';
+            lucide.createIcons({ nodes: [document.getElementById('forgotPasswordForm')] });
+        }
+
+        function hideForgotPassword(e) {
+            e.preventDefault();
+            document.getElementById('loginForm').classList.remove('hidden');
+            document.getElementById('forgotPasswordSection').classList.remove('hidden');
+            document.getElementById('forgotPasswordForm').classList.add('hidden');
+        }
+
+        let isForgotSubmitting = false;
+
+        async function handleForgotPassword(e) {
+            e.preventDefault();
+            if (isForgotSubmitting) return;
+
+            const email = document.getElementById('forgotEmail').value.trim();
+            const btn = document.getElementById('forgotBtn');
+            const btnText = document.getElementById('forgotBtnText');
+            const errorDiv = document.getElementById('forgotError');
+            const errorText = document.getElementById('forgotErrorText');
+            const successDiv = document.getElementById('forgotSuccess');
+
+            errorDiv.classList.remove('show');
+            successDiv.classList.add('hidden');
+
+            isForgotSubmitting = true;
+            btn.disabled = true;
+            btnText.textContent = 'Invio in corso...';
+
+            try {
+                const result = await apiCall('requestPasswordReset', { email });
+
+                // Mostra sempre successo (non rivela se l'email esiste)
+                successDiv.classList.remove('hidden');
+                lucide.createIcons({ nodes: [successDiv] });
+                btn.closest('form').classList.add('hidden');
+
+            } catch (err) {
+                errorText.textContent = 'Errore di connessione. Riprova.';
+                errorDiv.classList.add('show');
+            }
+
+            isForgotSubmitting = false;
+            btn.disabled = false;
+            btnText.textContent = 'Invia link di reset';
+        }
+    </script>
+</body>
+</html>
