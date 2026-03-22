@@ -4,7 +4,7 @@
 
 const CONFIG = {
     // URL del Google Apps Script Web App (da aggiornare dopo il deploy)
-    API_URL: 'https://script.google.com/macros/s/AKfycbzWyfmz5Kd81q8Zv_Yw5nY3NfZZyZojKCw-qqQ1cXNrnrr9sXk8ATn6WHqBf_g8Qa3a/exec',
+    API_URL: 'https://script.google.com/macros/s/AKfycbySXJF00zGUWKBNPQAaUU0maOJCEVVOmagKlYmtmxVzyxNgAuDwvfr6_lJchRQRq03G/exec',
 
     // Dimensione massima file (25MB)
     MAX_FILE_SIZE: 25 * 1024 * 1024,
