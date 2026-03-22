@@ -255,6 +255,10 @@ const Admin = {
     async saveClient(e) {
         e.preventDefault();
 
+        const errorEl = document.getElementById('clientError');
+        const errorText = document.getElementById('clientErrorText');
+        const btn = document.getElementById('clientSaveBtn');
+
         const data = {
             email: document.getElementById('clientEmail').value.trim(),
             telefono: document.getElementById('clientTelefono').value.trim(),
@@ -262,17 +266,30 @@ const Admin = {
         };
 
         if (this.clientType === 'denominazione') {
-            data.denominazione = document.getElementById('clientDenominazione').value.trim();
+            const denom = document.getElementById('clientDenominazione').value.trim();
+            if (!denom) {
+                errorText.textContent = 'La denominazione è obbligatoria';
+                errorEl.classList.remove('hidden');
+                return;
+            }
+            data.denominazione = denom;
             data.nome = '';
-            data.cognome = data.denominazione;
+            data.cognome = denom;
         } else {
             data.nome = document.getElementById('clientNome').value.trim();
             data.cognome = document.getElementById('clientCognome').value.trim();
+            if (!data.nome || !data.cognome) {
+                errorText.textContent = 'Nome e cognome sono obbligatori';
+                errorEl.classList.remove('hidden');
+                return;
+            }
         }
 
-        const errorEl = document.getElementById('clientError');
-        const errorText = document.getElementById('clientErrorText');
-        const btn = document.getElementById('clientSaveBtn');
+        if (!data.email) {
+            errorText.textContent = 'L\'email è obbligatoria';
+            errorEl.classList.remove('hidden');
+            return;
+        }
 
         errorEl.classList.add('hidden');
         btn.disabled = true;
@@ -285,9 +302,16 @@ const Admin = {
             data.originalEmail = this.editingClient;
             result = await apiCall('updateClient', data);
         } else {
-            // Nuovo
+            // Nuovo cliente: password obbligatoria
             if (!data.password) {
-                errorText.textContent = 'La password e\' obbligatoria';
+                errorText.textContent = 'La password è obbligatoria per i nuovi clienti';
+                errorEl.classList.remove('hidden');
+                btn.disabled = false;
+                btn.querySelector('span').textContent = 'Salva';
+                return;
+            }
+            if (data.password.length < 6) {
+                errorText.textContent = 'La password deve essere di almeno 6 caratteri';
                 errorEl.classList.remove('hidden');
                 btn.disabled = false;
                 btn.querySelector('span').textContent = 'Salva';
