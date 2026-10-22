@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Console studio · Assetto Impresa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Display&family=Libre+Caslon+Text:ital@0;1&family=Schibsted+Grotesk:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="css/area.css">
+</head>
+<body>
+<header class="testata">
+  <div class="wrap">
+    <a class="marchio" href="studio.html"><b>Assetto <i>Impresa</i></b><small>Console dello studio</small></a>
+    <div class="utente" id="barra-utente" hidden>
+      <button class="btn-piccolo tenue" type="button" id="aggiorna">Aggiorna</button>
+      <button class="link-testo" type="button" id="esci">Esci</button>
+    </div>
+  </div>
+</header>
+
+<!-- ACCESSO -->
+<main class="wrap accesso" id="accesso">
+  <form class="scheda" id="f-pw" novalidate>
+    <p class="eyebrow">Riservato allo studio</p>
+    <h1>Console</h1>
+    <div class="messaggio-errore" id="e-pw" hidden></div>
+    <label class="campo" for="pw">Password della console<input id="pw" type="password" autocomplete="current-password"></label>
+    <button class="btn pieno" type="submit">Continua <span>→</span></button>
+  </form>
+  <form class="scheda" id="f-otp" novalidate hidden>
+    <p class="eyebrow">Verifica</p>
+    <h1>Codice di verifica</h1>
+    <p>Codice inviato a <b id="otp-email"></b>.</p>
+    <div class="messaggio-errore" id="e-otp" hidden></div>
+    <label class="campo" for="otp">Codice<input id="otp" class="codice-otp" inputmode="numeric" autocomplete="one-time-code" maxlength="7"></label>
+    <button class="btn pieno" type="submit">Entra <span>→</span></button>
+  </form>
+</main>
+
+<!-- CONSOLE -->
+<div id="console" hidden>
+  <div class="wrap">
+    <nav class="schede" role="tablist" aria-label="Sezioni della console">
+      <button role="tab" aria-selected="true" data-scheda="arrivi">Da registrare <span class="conta" id="c-arrivi" hidden></span></button>
+      <button role="tab" aria-selected="false" data-scheda="clienti">Clienti</button>
+      <button role="tab" aria-selected="false" data-scheda="richieste">Richieste</button>
+      <button role="tab" aria-selected="false" data-scheda="scadenze">Scadenze</button>
+      <button role="tab" aria-selected="false" data-scheda="registro">Registro</button>
+      <button role="tab" aria-selected="false" data-scheda="impostazioni">Impostazioni</button>
+    </nav>
+  </div>
+  <main class="wrap corpo">
+    <div class="riepilogo quattro">
+      <div><b id="k-clienti">–</b><span>clienti attivi</span></div>
+      <div><b id="k-arrivi">–</b><span>documenti da registrare</span></div>
+      <div><b id="k-richieste">–</b><span>richieste aperte</span></div>
+      <div><b id="k-mai">–</b><span>clienti mai entrati</span></div>
+    </div>
+
+    <section data-pannello="arrivi">
+      <div class="titolo"><div><p class="eyebrow">Arrivi</p><h1>Documenti caricati</h1></div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:end">
+          <label class="campo" for="filtro-cliente">Cliente<select id="filtro-cliente"><option value="">Tutti</option></select></label>
+          <label class="campo" for="filtro-stato">Stato<select id="filtro-stato"><option value="ricevuto">Da registrare</option><option value="">Tutti</option><option value="registrato">Registrati</option></select></label>
+        </div>
+      </div>
+      <div class="pannello">
+        <header><h2 id="arrivi-titolo">Da registrare</h2><button class="btn-piccolo" type="button" id="segna-tutti">Segna i visibili come registrati</button></header>
+        <div class="tabella-wrap"><table class="tabella"><thead><tr><th>Data</th><th>Cliente</th><th>Documento</th><th>Stato</th><th></th></tr></thead><tbody id="t-arrivi"></tbody></table></div>
+      </div>
+    </section>
+
+    <section data-pannello="clienti" hidden>
+      <div class="titolo"><div><p class="eyebrow">Clienti</p><h1>Accessi dei clienti</h1></div><button class="btn pieno" type="button" id="nuovo-cliente">Nuovo cliente <span>+</span></button></div>
+      <div class="pannello"><div class="tabella-wrap"><table class="tabella"><thead><tr><th>Cliente</th><th>Ultimo accesso</th><th>Ultimo caricamento</th><th>Da reg.</th><th>Rich.</th><th></th></tr></thead><tbody id="t-clienti"></tbody></table></div></div>
+    </section>
+
+    <section data-pannello="richieste" hidden>
+      <div class="titolo"><div><p class="eyebrow">Richieste</p><h1>Documenti richiesti ai clienti</h1></div><button class="btn pieno" type="button" id="nuova-richiesta">Nuova richiesta <span>+</span></button></div>
+      <div class="pannello"><div class="tabella-wrap"><table class="tabella"><thead><tr><th>Entro</th><th>Cliente</th><th>Documento</th><th>Stato</th><th></th></tr></thead><tbody id="t-richieste"></tbody></table></div></div>
+    </section>
+
+    <section data-pannello="scadenze" hidden>
+      <div class="titolo"><div><p class="eyebrow">Scadenze</p><h1>Scadenze mostrate ai clienti</h1></div><button class="btn pieno" type="button" id="nuova-scadenza">Nuova scadenza <span>+</span></button></div>
+      <div class="pannello"><div class="tabella-wrap"><table class="tabella"><thead><tr><th>Data</th><th>Per</th><th>Scadenza</th><th></th></tr></thead><tbody id="t-scadenze"></tbody></table></div></div>
+    </section>
+
+    <section data-pannello="registro" hidden>
+      <div class="titolo"><div><p class="eyebrow">Registro</p><h1>Accessi e operazioni</h1></div><p>Ultime 300 operazioni. Il registro completo è nel foglio dati.</p></div>
+      <div class="pannello"><div class="tabella-wrap"><table class="tabella"><thead><tr><th>Data</th><th>Chi</th><th>Operazione</th><th>Esito</th></tr></thead><tbody id="t-registro"></tbody></table></div></div>
+    </section>
+
+    <section data-pannello="impostazioni" hidden>
+      <div class="titolo"><div><p class="eyebrow">Impostazioni</p><h1>Password della console</h1></div></div>
+      <div class="pannello" style="max-width:520px">
+        <form class="dentro" id="f-cambio" novalidate>
+          <label class="campo" for="c-attuale">Password attuale<input id="c-attuale" type="password" autocomplete="current-password"></label>
+          <label class="campo" for="c-nuova">Nuova password<input id="c-nuova" type="password" autocomplete="new-password"><span class="aiuto">Almeno 14 caratteri, con lettere e numeri.</span></label>
+          <label class="campo" for="c-conferma">Ripeta la nuova password<input id="c-conferma" type="password" autocomplete="new-password"></label>
+          <div><button class="btn" type="submit">Aggiorna</button></div>
+        </form>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script src="js/config.js"></script>
+<script src="js/comune.js"></script>
+<script src="js/studio.js"></script>
+</body>
+</html>

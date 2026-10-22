@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Area clienti · Assetto Impresa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Display&family=Libre+Caslon+Text:ital@0;1&family=Schibsted+Grotesk:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="css/area.css">
+</head>
+<body>
+<header class="testata">
+  <div class="wrap">
+    <a class="marchio" id="link-sito" href="#"><b>Assetto <i>Impresa</i></b><small>Area clienti</small></a>
+    <div class="utente">
+      <span class="sigla" id="u-sigla">·</span>
+      <div class="testo"><b id="u-nome"></b><small id="u-referente"></small></div>
+      <button class="link-testo" type="button" id="esci">Esci</button>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <nav class="schede" role="tablist" aria-label="Sezioni">
+    <button role="tab" aria-selected="true" data-scheda="bacheca">Bacheca</button>
+    <button role="tab" aria-selected="false" data-scheda="carica">Carica documenti</button>
+    <button role="tab" aria-selected="false" data-scheda="studio">Dallo studio <span class="conta" id="conta-nuovi" hidden></span></button>
+    <button role="tab" aria-selected="false" data-scheda="profilo">Profilo</button>
+  </nav>
+</div>
+
+<main class="wrap corpo">
+  <!-- BACHECA -->
+  <section data-pannello="bacheca">
+    <div class="titolo">
+      <div><p class="eyebrow" id="oggi"></p><h1 id="saluto">Buongiorno</h1></div>
+      <p>Qui trova i documenti che lo studio le chiede e le prossime scadenze.</p>
+    </div>
+    <div class="riepilogo">
+      <div><b id="n-richieste">–</b><span>documenti richiesti dallo studio</span></div>
+      <div><b id="n-nuovi">–</b><span>nuovi documenti dallo studio</span></div>
+      <div><b id="prossima">–</b><span id="prossima-testo">prossima scadenza</span></div>
+    </div>
+    <div class="griglia">
+      <div class="pannello">
+        <header><h2>Documenti richiesti</h2><span>da caricare</span></header>
+        <ul class="elenco" id="richieste"><li class="vuoto">Caricamento…</li></ul>
+      </div>
+      <div class="pannello">
+        <header><h2>Le sue scadenze</h2><span>prossimi 4 mesi</span></header>
+        <ul class="elenco" id="scadenze"><li class="vuoto">Caricamento…</li></ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- CARICA -->
+  <section data-pannello="carica" hidden>
+    <div class="titolo">
+      <div><p class="eyebrow">Carica documenti</p><h1>Invii allo studio</h1></div>
+      <p>Ogni file viene rinominato con periodo, categoria e dettaglio, così lo studio lo trova subito.</p>
+    </div>
+    <div class="griglia">
+      <div class="pannello">
+        <form class="dentro" id="f-carica" novalidate>
+          <div class="richiesta-legata" id="legata" hidden><span>Per la richiesta: <b id="legata-titolo"></b></span><button class="link-testo" type="button" id="slega">Rimuovi</button></div>
+          <label class="campo" for="cat">Categoria<select id="cat"></select></label>
+          <div class="campi">
+            <label class="campo" for="mese">Periodo di riferimento<input id="mese" type="month" required></label>
+            <label class="campo" for="dett">Dettaglio<input id="dett" maxlength="60" placeholder="Es. banca e ultime cifre del conto"><span class="aiuto">Banca, ente, fornitore: compare nel nome del file.</span></label>
+          </div>
+          <div class="zona" id="zona" tabindex="0" role="button" aria-label="Scegli o trascina i file">
+            <b>Trascini qui i file</b>
+            <span id="zona-testo">oppure faccia clic per sceglierli</span>
+            <input type="file" id="file" multiple hidden>
+          </div>
+          <div class="coda" id="coda"></div>
+          <label class="campo" for="nota">Nota per lo studio<textarea id="nota" maxlength="500" placeholder="Facoltativa. Es. manca la pagina 3, la carico domani."></textarea></label>
+          <div><button class="btn pieno" type="submit" id="invia">Invia allo studio <span>→</span></button></div>
+        </form>
+      </div>
+      <div class="pannello">
+        <header><h2>Caricati di recente</h2><span id="n-caricati"></span></header>
+        <ul class="elenco" id="caricati"><li class="vuoto">Caricamento…</li></ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- DALLO STUDIO -->
+  <section data-pannello="studio" hidden>
+    <div class="titolo">
+      <div><p class="eyebrow">Dallo studio</p><h1>Documenti per lei</h1></div>
+      <p>F24, dichiarazioni, bilanci, cedolini e comunicazioni predisposti dallo studio.</p>
+    </div>
+    <div class="pannello"><ul class="elenco" id="documenti"><li class="vuoto">Caricamento…</li></ul></div>
+  </section>
+
+  <!-- PROFILO -->
+  <section data-pannello="profilo" hidden>
+    <div class="titolo"><div><p class="eyebrow">Profilo</p><h1>I suoi dati di accesso</h1></div></div>
+    <div class="griglia pari">
+      <div class="pannello">
+        <header><h2>Account</h2></header>
+        <ul class="elenco">
+          <li><div><small>Cliente</small><b id="p-nome"></b></div></li>
+          <li><div><small>E-mail di accesso</small><b id="p-email"></b></div></li>
+          <li><div><small>Referente nello studio</small><b id="p-referente"></b></div></li>
+        </ul>
+      </div>
+      <div class="pannello">
+        <header><h2>Cambia password</h2></header>
+        <form class="dentro" id="f-password" novalidate>
+          <label class="campo" for="pw-attuale">Password attuale<input id="pw-attuale" type="password" autocomplete="current-password"></label>
+          <label class="campo" for="pw-nuova">Nuova password<input id="pw-nuova" type="password" autocomplete="new-password"><span class="aiuto">Almeno 10 caratteri, con lettere e numeri.</span></label>
+          <label class="campo" for="pw-conferma">Ripeta la nuova password<input id="pw-conferma" type="password" autocomplete="new-password"></label>
+          <div><button class="btn" type="submit">Aggiorna la password</button></div>
+        </form>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="piede"><div class="wrap"><span>Per assistenza scriva allo studio: tel. +39 0922 872592 · PEC dott.gmarotta@pec.it</span><span>Informativa privacy</span></div></footer>
+
+<script src="js/config.js"></script>
+<script src="js/comune.js"></script>
+<script>
+(function () {
+  const $ = s => document.querySelector(s);
+  const $$ = s => [...document.querySelectorAll(s)];
+  $('#link-sito').href = CONFIG.SITO_URL;
+
+  const s = AI.sessione.leggi('ai_cliente');
+  if (!s || !s.token) { location.replace('index.html'); return; }
+  let dati = null, coda = [], richiestaLegata = null;
+
+  async function chiama(azione, extra) {
+    const r = await AI.api(azione, Object.assign({ token: s.token }, extra || {}));
+    if (!r.ok && r.codice === 'SESSIONE') { AI.sessione.cancella('ai_cliente'); location.replace('index.html'); }
+    return r;
+  }
+
+  /* intestazione */
+  function intestazione(p) {
+    $('#u-nome').textContent = p.ragione_sociale; $('#u-sigla').textContent = AI.sigla(p.ragione_sociale);
+    $('#u-referente').textContent = 'Referente: ' + p.referente;
+    $('#p-nome').textContent = p.ragione_sociale; $('#p-email').textContent = p.email; $('#p-referente').textContent = p.referente;
+    const ora = new Date().getHours();
+    $('#saluto').textContent = (ora < 13 ? 'Buongiorno, ' : ora < 18 ? 'Buon pomeriggio, ' : 'Buonasera, ') + p.ragione_sociale;
+    const oggi = new Date();
+    $('#oggi').textContent = oggi.toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+  }
+  intestazione(s.profilo);
+
+  $('#esci').addEventListener('click', async () => { await AI.api('esci', { token: s.token }); AI.sessione.cancella('ai_cliente'); location.replace('index.html'); });
+
+  /* schede */
+  function apri(nome) {
+    $$('.schede button').forEach(b => b.setAttribute('aria-selected', String(b.dataset.scheda === nome)));
+    $$('[data-pannello]').forEach(p => p.hidden = p.dataset.pannello !== nome);
+    if (nome === 'studio') caricaDocumenti();
+    window.scrollTo(0, 0);
+  }
+  $$('.schede button').forEach(b => b.addEventListener('click', () => apri(b.dataset.scheda)));
+
+  /* bacheca */
+  async function aggiorna() {
+    const r = await chiama('bacheca');
+    if (!r.ok) { AI.avviso(r.errore, 'errore'); return; }
+    dati = r; intestazione(r.profilo);
+    // categorie
+    const sel = $('#cat'); const scelta = sel.value;
+    sel.innerHTML = Object.keys(r.categorie).map(k => '<option value="' + AI.esc(k) + '">' + AI.esc(r.categorie[k]) + '</option>').join('');
+    if (scelta) sel.value = scelta;
+    // contatori
+    $('#n-richieste').textContent = r.richieste.filter(x => x.stato === 'aperta').length;
+    $('#n-nuovi').textContent = r.nuoviDocumenti;
+    const c = $('#conta-nuovi'); c.textContent = r.nuoviDocumenti; c.hidden = !r.nuoviDocumenti;
+    if (r.scadenze.length) { $('#prossima').textContent = AI.dataBreve(r.scadenze[0].data); $('#prossima-testo').textContent = r.scadenze[0].titolo; }
+    else { $('#prossima').textContent = '—'; $('#prossima-testo').textContent = 'nessuna scadenza nei prossimi mesi'; }
+    disegnaRichieste(); disegnaScadenze(); disegnaCaricati();
+  }
+
+  function disegnaRichieste() {
+    const ul = $('#richieste');
+    if (!dati.richieste.length) { ul.innerHTML = '<li class="vuoto">Nessun documento richiesto in questo momento.</li>'; return; }
+    ul.innerHTML = dati.richieste.map(q => {
+      const g = q.scadenza ? AI.giorniA(q.scadenza) : null;
+      const stato = q.stato === 'ricevuta' ? '<span class="stato ok">Ricevuto</span>'
+        : '<span class="stato ' + (g !== null && g <= 3 ? 'urgente' : 'attesa') + '">' + (q.scadenza ? 'Entro ' + AI.dataBreve(q.scadenza) : 'Da caricare') + '</span>';
+      const det = [q.descrizione, q.periodo ? 'Periodo: ' + AI.periodo(q.periodo) : ''].filter(Boolean).join(' · ');
+      return '<li><div><b>' + AI.esc(q.titolo) + '</b><small>' + AI.esc(det) + '</small></div><div class="destra">' + stato +
+        (q.stato === 'aperta' ? '<button class="btn-piccolo" type="button" data-richiesta="' + AI.esc(q.id) + '">Carica</button>' : '') + '</div></li>';
+    }).join('');
+    ul.querySelectorAll('[data-richiesta]').forEach(b => b.addEventListener('click', () => legaRichiesta(b.dataset.richiesta)));
+  }
+
+  function disegnaScadenze() {
+    const ul = $('#scadenze');
+    if (!dati.scadenze.length) { ul.innerHTML = '<li class="vuoto">Nessuna scadenza nei prossimi quattro mesi.</li>'; return; }
+    ul.innerHTML = dati.scadenze.map(x => {
+      const g = AI.giorniA(x.data);
+      return '<li><div><b>' + AI.esc(x.titolo) + '</b><small>' + AI.esc(x.dettaglio || (x.generale ? 'Scadenza generale' : '')) + '</small></div>' +
+        '<span class="stato ' + (g <= 7 ? 'urgente' : g <= 30 ? 'attesa' : 'ok') + '">' + AI.dataBreve(x.data) + '</span></li>';
+    }).join('');
+  }
+
+  function disegnaCaricati() {
+    const ul = $('#caricati');
+    $('#n-caricati').textContent = dati.caricamenti.length ? dati.caricamenti.length + ' file' : '';
+    if (!dati.caricamenti.length) { ul.innerHTML = '<li class="vuoto">Non ha ancora caricato documenti.</li>'; return; }
+    const ora = Date.now();
+    ul.innerHTML = dati.caricamenti.map(x => {
+      const annullabile = x.stato === 'ricevuto' && ora - new Date(x.data).getTime() < 24 * 3600000;
+      const etichetta = x.stato === 'registrato' ? '<span class="stato ok">Registrato</span>' : '<span class="stato attesa">Ricevuto</span>';
+      return '<li><div><b>' + AI.esc((dati.categorie[x.categoria] || x.categoria) + ' · ' + AI.periodo(x.periodo)) + '</b><small>' + AI.esc(x.nome) +
+        ' · ' + AI.dataOra(x.data) + '</small></div><div class="destra">' + etichetta +
+        (annullabile ? '<button class="btn-piccolo tenue" type="button" data-annulla="' + AI.esc(x.id) + '">Annulla</button>' : '') + '</div></li>';
+    }).join('');
+    ul.querySelectorAll('[data-annulla]').forEach(b => b.addEventListener('click', () => conferma(
+      'Annullare il caricamento?', 'Il file verrà tolto dall\'archivio dello studio.', 'Annulla il caricamento', async () => {
+        const r = await chiama('annullaCaricamento', { id: b.dataset.annulla });
+        if (!r.ok) return AI.avviso(r.errore, 'errore');
+        AI.avviso('Caricamento annullato'); aggiorna();
+      })));
+  }
+
+  function conferma(titolo, testo, etichetta, azione) {
+    AI.dialogo('<h2>' + AI.esc(titolo) + '</h2><p>' + AI.esc(testo) + '</p><div class="azioni"><button class="btn" type="button" data-chiudi>Indietro</button>' +
+      '<button class="btn pieno" type="button" id="ok-conferma">' + AI.esc(etichetta) + '</button></div>', (d, chiudi) => {
+        d.querySelector('#ok-conferma').addEventListener('click', () => { chiudi(); azione(); });
+      });
+  }
+
+  /* caricamento */
+  const oggi = new Date(); const precedente = new Date(oggi.getFullYear(), oggi.getMonth() - 1, 1);
+  $('#mese').value = precedente.getFullYear() + '-' + String(precedente.getMonth() + 1).padStart(2, '0');
+  $('#zona-testo').textContent = 'oppure faccia clic per sceglierli · ' + CONFIG.ESTENSIONI.slice(0, 6).join(', ').toUpperCase() + '… · max ' + CONFIG.MAX_MB + ' MB';
+  $('#file').accept = CONFIG.ESTENSIONI.map(x => '.' + x).join(',');
+
+  function legaRichiesta(id) {
+    const q = dati.richieste.find(x => x.id === id); if (!q) return;
+    richiestaLegata = q;
+    if (q.categoria) $('#cat').value = q.categoria;
+    if (q.periodo) $('#mese').value = q.periodo;
+    $('#legata-titolo').textContent = q.titolo; $('#legata').hidden = false;
+    apri('carica'); $('#zona').focus();
+  }
+  $('#slega').addEventListener('click', () => { richiestaLegata = null; $('#legata').hidden = true; });
+
+  function anteprimaNome(f, i) {
+    const est = (f.name.split('.').pop() || '').toLowerCase();
+    const dett = $('#dett').value.normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^A-Za-z0-9]+/g, ' ').trim().split(' ').filter(Boolean).map(w => w[0].toUpperCase() + w.slice(1)).join('');
+    return [$('#mese').value, $('#cat').value, dett].filter(Boolean).join('_') + '.' + est;
+  }
+  function disegnaCoda() {
+    $('#coda').innerHTML = coda.map((f, i) => {
+      const est = (f.name.split('.').pop() || '').toLowerCase();
+      const problema = CONFIG.ESTENSIONI.indexOf(est) < 0 ? 'formato non ammesso' : f.size > CONFIG.MAX_MB * 1048576 ? 'supera ' + CONFIG.MAX_MB + ' MB' : '';
+      return '<div class="voce"><div><small>' + AI.esc(f.name) + ' · ' + AI.dimensione(f.size) + '</small><br><code>' +
+        (problema ? '' : '→ ' + AI.esc(anteprimaNome(f, i))) + '</code>' + (problema ? '<b style="color:var(--urgente)">' + problema + '</b>' : '') +
+        '</div><button class="btn-piccolo tenue" type="button" data-togli="' + i + '">Togli</button></div>';
+    }).join('');
+    $('#coda').querySelectorAll('[data-togli]').forEach(b => b.addEventListener('click', () => { coda.splice(Number(b.dataset.togli), 1); disegnaCoda(); }));
+  }
+  ['#cat', '#mese', '#dett'].forEach(id => $(id).addEventListener('input', disegnaCoda));
+  const zona = $('#zona'), input = $('#file');
+  zona.addEventListener('click', () => input.click());
+  zona.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); input.click(); } });
+  input.addEventListener('change', () => { coda = coda.concat([...input.files]); input.value = ''; disegnaCoda(); });
+  ['dragenter', 'dragover'].forEach(t => zona.addEventListener(t, e => { e.preventDefault(); zona.classList.add('sopra'); }));
+  ['dragleave', 'drop'].forEach(t => zona.addEventListener(t, e => { e.preventDefault(); zona.classList.remove('sopra'); }));
+  zona.addEventListener('drop', e => { coda = coda.concat([...e.dataTransfer.files]); disegnaCoda(); });
+
+  $('#f-carica').addEventListener('submit', async e => {
+    e.preventDefault();
+    const validi = coda.filter(f => CONFIG.ESTENSIONI.indexOf((f.name.split('.').pop() || '').toLowerCase()) >= 0 && f.size <= CONFIG.MAX_MB * 1048576);
+    if (!validi.length) return AI.avviso('Scelga almeno un file valido da inviare.', 'errore');
+    if (!$('#mese').value) return AI.avviso('Indichi il periodo di riferimento.', 'errore');
+    const btn = $('#invia'); let inviati = 0;
+    for (let i = 0; i < validi.length; i++) {
+      AI.attesa(btn, true, 'Invio ' + (i + 1) + ' di ' + validi.length + '…');
+      try {
+        const base64 = await AI.leggiBase64(validi[i]);
+        const r = await chiama('carica', {
+          categoria: $('#cat').value, periodo: $('#mese').value, dettaglio: $('#dett').value, nota: $('#nota').value,
+          nomeFile: validi[i].name, base64: base64, richiestaId: richiestaLegata ? richiestaLegata.id : ''
+        });
+        if (!r.ok) { AI.avviso(validi[i].name + ': ' + r.errore, 'errore'); continue; }
+        inviati++; coda.splice(coda.indexOf(validi[i]), 1);
+      } catch (err) { AI.avviso(validi[i].name + ': ' + err.message, 'errore'); }
+    }
+    AI.attesa(btn, false); disegnaCoda();
+    if (inviati) {
+      AI.avviso(inviati === 1 ? 'Documento inviato allo studio' : inviati + ' documenti inviati allo studio');
+      $('#nota').value = ''; richiestaLegata = null; $('#legata').hidden = true;
+      aggiorna();
+    }
+  });
+
+  /* documenti dallo studio */
+  async function caricaDocumenti() {
+    const ul = $('#documenti');
+    const r = await chiama('documentiStudio');
+    if (!r.ok) { ul.innerHTML = '<li class="vuoto">' + AI.esc(r.errore) + '</li>'; return; }
+    if (!r.documenti.length) { ul.innerHTML = '<li class="vuoto">Lo studio non ha ancora pubblicato documenti per lei.</li>'; return; }
+    ul.innerHTML = r.documenti.map(d => '<li><div><b>' + AI.esc(d.nome) + '</b><small>' +
+      AI.esc([d.sezione, d.descrizione, AI.dataOra(d.data), AI.dimensione(d.dimensione)].filter(Boolean).join(' · ')) + '</small></div>' +
+      '<div class="destra">' + (d.letto ? '' : '<span class="stato urgente">Nuovo</span>') +
+      '<button class="btn-piccolo" type="button" data-scarica="' + AI.esc(d.id) + '">Scarica</button></div></li>').join('');
+    ul.querySelectorAll('[data-scarica]').forEach(b => b.addEventListener('click', async () => {
+      AI.attesa(b, true, '…');
+      const x = await chiama('scaricaDocumento', { id: b.dataset.scarica });
+      AI.attesa(b, false);
+      if (!x.ok) return AI.avviso(x.errore, 'errore');
+      AI.salvaFile(x.base64, x.nome, x.mime);
+      const st = b.parentElement.querySelector('.stato'); if (st) st.remove();
+      aggiorna();
+    }));
+  }
+
+  /* profilo */
+  $('#f-password').addEventListener('submit', async e => {
+    e.preventDefault();
+    if ($('#pw-nuova').value !== $('#pw-conferma').value) return AI.avviso('Le due password non coincidono.', 'errore');
+    const btn = e.target.querySelector('[type=submit]'); AI.attesa(btn, true, 'Salvataggio…');
+    const r = await chiama('cambiaPassword', { attuale: $('#pw-attuale').value, nuova: $('#pw-nuova').value });
+    AI.attesa(btn, false);
+    if (!r.ok) return AI.avviso(r.errore, 'errore');
+    e.target.reset(); AI.avviso('Password aggiornata');
+  });
+
+  aggiorna();
+})();
+</script>
+</body>
+</html>
